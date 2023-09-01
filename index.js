@@ -6,7 +6,7 @@ require('dotenv').config();
 const adminAuthRoutes = require('./routes/admins');
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT;
 const mongodbURI = process.env.MONGODB_URI;
 
 // Middleware to parse incoming JSON data
