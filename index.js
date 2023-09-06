@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const adminAuthRoutes = require('./routes/admins');
+const userRoutes = require('./routes/users');
+
 
 const app = express();
 const port = process.env.PORT;
@@ -26,6 +28,8 @@ mongoose.connect(mongodbURI, {
 
 // Routes
 app.use('/auth/admin', adminAuthRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use('/auth/users', userRoutes);
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
