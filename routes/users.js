@@ -42,7 +42,8 @@ router.post('/create-user', upload.single('userImage'), async (req, res) => {
             password: hashedPassword,
             userImage,
             address,
-            city
+            city,
+            dob
         });
         newUser.createdAt = new Date();
 
