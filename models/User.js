@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
     userImage: String,
     address: String,
     city: String,
+
+    dob:String,
     createdAt: {
         type: Date,
         default: Date.now,
