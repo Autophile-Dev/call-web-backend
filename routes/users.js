@@ -97,10 +97,13 @@ require('dotenv').config();
 
 // Configure Cloudinary using your API credentials
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+    cloud_name: 'dmw2sruc5',
+    api_key: '817866735889511',
+    api_secret: 'UX4gUEZQeN_jKtD2ZNqa8BbXGU4'
 });
+
+
+
 
 // Create a multer storage engine that uploads directly to Cloudinary
 const storage = multer.memoryStorage();
