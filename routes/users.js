@@ -8,7 +8,7 @@ const User = require('../models/User');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 require('dotenv').config();
-import { v2 as cloudinary } from 'cloudinary';
+
 
 cloudinary.config({
     cloud_name: 'dmw2sruc5',
