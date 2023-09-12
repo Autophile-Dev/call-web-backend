@@ -5,18 +5,22 @@ const bcrypt = require('bcryptjs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 require('dotenv').config();
-function generateDestination(req, file, cb) {
-    const date = new Date();
-    
-    const destination = path.join(__dirname, `../uploads/`);
-    cb(null, destination);
-}
+import { v2 as cloudinary } from 'cloudinary';
 
-const storage = multer.diskStorage({
-    destination: generateDestination,
-    filename: function (req, file, cb) {
-        cb(null, file.originalname); // Use the original file name
+cloudinary.config({
+    cloud_name: 'dmw2sruc5',
+    api_key: '817866735889511',
+    api_secret: 'UX4gUEZQeN_jKtD2ZNqa8BbXGU4'
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: 'user-images', // Optional: specify a folder in your Cloudinary account
+        allowedFormats: ['jpg', 'png', 'jpeg'],
     },
 });
 
@@ -36,13 +40,15 @@ router.post('/create-user', upload.single('userImage'), async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        const imageUrl = req.file?.path || '';
+
         const newUser = new User({
             firstName,
             lastName,
             email,
             phoneNum,
             password: hashedPassword,
-            userImage: req.file.path, // Use req.file.path for the image path
+            userImage: imageUrl, // Use req.file.path for the image path
             address,
             city,
             dob
