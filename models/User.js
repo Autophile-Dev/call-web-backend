@@ -8,11 +8,20 @@ const userSchema = new mongoose.Schema({
     },
     phoneNum: String,
     password: String,
-    userImage: String,
+    userImage: {
+        public_id: {
+            type: String,
+            required: true,
+        },
+        url: {
+            type: String,
+            required: true,
+        }
+    },
     address: String,
     city: String,
 
-    dob:String,
+    dob: String,
     createdAt: {
         type: Date,
         default: Date.now,
