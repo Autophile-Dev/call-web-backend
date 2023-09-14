@@ -92,7 +92,7 @@ const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const cloudinary = require('cloudinary').v2;
+
 require('dotenv').config();
 
 const cloudinary = require('../utils/cloudinary');
