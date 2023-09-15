@@ -7,16 +7,8 @@ const userSchema = new mongoose.Schema({
         unique: true,
     },
     phoneNum: String,
-    password: String,
     userImage: {
-        public_id: {
-            type: String,
-            required: true,
-        },
-        url: {
-            type: String,
-            required: true,
-        }
+        type: String
     },
     address: String,
     city: String,
@@ -26,6 +18,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    password: String,
 });
 
 const User = mongoose.model('User', userSchema);
