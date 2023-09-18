@@ -72,12 +72,19 @@ router.post('/user-login', async (req, res) => {
 });
 
 
-// Fetch all users
 router.get('/all-user', async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
-    // res.status(200).json({ message: 'All record has been fetched' });
+    const page = parseInt(req.query.page) || 1; // Current page (default: 1)
+    const perPage = parseInt(req.query.perPage) || 20; // Records per page (default: 20)
+
+    const totalUsers = await User.countDocuments();
+    const totalPages = Math.ceil(totalUsers / perPage);
+
+    const users = await User.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    res.json({ users, totalPages, currentPage: page });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
