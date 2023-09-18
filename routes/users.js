@@ -71,7 +71,7 @@ router.post('/user-login', async (req, res) => {
   }
 });
 
-
+// Fetch all user according to pagination
 router.get('/all-user', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Current page (default: 1)
@@ -84,7 +84,7 @@ router.get('/all-user', async (req, res) => {
       .skip((page - 1) * perPage)
       .limit(perPage);
 
-    res.json({ users, totalPages, currentPage: page });
+    res.json({ users, totalRecords: totalUsers, totalPages, currentPage: page });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
