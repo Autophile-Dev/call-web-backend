@@ -75,7 +75,7 @@ router.post('/user-login', async (req, res) => {
 router.get('/all-user', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Current page (default: 1)
-    const perPage = parseInt(req.query.perPage) || 20; // Records per page (default: 20)
+    const perPage = parseInt(req.query.perPage) || 10; // Records per page (default: 20)
 
     const totalUsers = await User.countDocuments();
     const totalPages = Math.ceil(totalUsers / perPage);
