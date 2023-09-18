@@ -71,6 +71,57 @@ router.post('/user-login', async (req, res) => {
   }
 });
 
+
+// Fetch all users
+router.get('/all-user', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+    // res.status(200).json({ message: 'All record has been fetched' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Delete users
+router.delete('/delete-user/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+})
+
+
+// Update user from admin panel
+router.put('/update-user/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { firstName, lastName, phoneNum, address, city } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.phoneNum = phoneNum;
+    user.address = address;
+    user.city = city;
+    await user.save();
+    res.status(200).json({ message: 'User updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;
 
 
