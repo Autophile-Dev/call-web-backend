@@ -90,7 +90,17 @@ router.get('/all-user', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+// Export all record
+router.get('/all-users-for-export', async (req, res) => {
+  try {
+    const users = await User.find();
 
+    res.json({ users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 // Delete users
 router.delete('/delete-user/:id', async (req, res) => {
   try {
