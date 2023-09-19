@@ -81,6 +81,7 @@ router.get('/all-user', async (req, res) => {
     const totalPages = Math.ceil(totalUsers / perPage);
 
     const users = await User.find()
+      .sort({ createdAt: 1 }) // Sort by createdAt field in ascending order
       .skip((page - 1) * perPage)
       .limit(perPage);
 
@@ -90,10 +91,12 @@ router.get('/all-user', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 // Export all record
 router.get('/all-users-for-export', async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find()
+      .sort({ createdAt: 1 }); // Sort by createdAt field in ascending order
 
     res.json({ users });
   } catch (error) {
@@ -101,6 +104,7 @@ router.get('/all-users-for-export', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 // Delete users
 router.delete('/delete-user/:id', async (req, res) => {
   try {
