@@ -81,7 +81,7 @@ router.get('/all-user', async (req, res) => {
     const totalPages = Math.ceil(totalUsers / perPage);
 
     const users = await User.find()
-      .sort({ createdAt: 1 }) // Sort by createdAt field in ascending order
+      .sort({ createdAt: -1 }) // Sort by createdAt field in ascending order
       .skip((page - 1) * perPage)
       .limit(perPage);
 
@@ -96,7 +96,7 @@ router.get('/all-user', async (req, res) => {
 router.get('/all-users-for-export', async (req, res) => {
   try {
     const users = await User.find()
-      .sort({ createdAt: 1 }); // Sort by createdAt field in ascending order
+      .sort({ createdAt: -1 }); // Sort by createdAt field in ascending order
 
     res.json({ users });
   } catch (error) {
