@@ -125,7 +125,7 @@ router.delete('/delete-user/:id', async (req, res) => {
 router.put('/update-user/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-    const { firstName, lastName, phoneNum, address, city } = req.body;
+    const { firstName, lastName, phoneNum, address, city, dob } = req.body;
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -135,6 +135,7 @@ router.put('/update-user/:id', async (req, res) => {
     user.phoneNum = phoneNum;
     user.address = address;
     user.city = city;
+    user.dob = dob;
     await user.save();
     res.status(200).json({ message: 'User updated successfully' });
   } catch (error) {
