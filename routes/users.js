@@ -84,8 +84,9 @@ router.get('/all-user', async (req, res) => {
       .sort({ createdAt: -1 }) // Sort by createdAt field in ascending order
       .skip((page - 1) * perPage)
       .limit(perPage);
-
-    res.json({ users, totalRecords: totalUsers, totalPages, currentPage: page });
+    const existUsingUsers = await User.find()
+      .sort({ createdAt: -1 });
+    res.json({ users, existUsingUsers, totalRecords: totalUsers, totalPages, currentPage: page });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
