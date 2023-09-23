@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 require('dotenv').config();
+const cloudinary = require("../utils/cloudinary");
+const upload = require("../middleware/multer");
 
 router.post('/admin-register', async (req, res) => {
     try {
@@ -40,7 +42,6 @@ router.post('/admin-register', async (req, res) => {
         res.status(500).json({ message: 'Internal server Error' });
     }
 });
-
 // Login admin with authentication and web token
 router.post('/admin-login', async (req, res) => {
     try {
@@ -58,11 +59,44 @@ router.post('/admin-login', async (req, res) => {
         }
         // Assigning token
         const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET);
-        return res.status(200).send({admin: admin, token})
+        return res.status(200).send({ admin: admin, token })
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server Error' });
     }
 });
+
+// update basic profile
+router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { firstName, lastName, phoneNum, dob } = req.body;
+
+        // check if an image was uploaded
+        let userProfileImageUrl = '';
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'admin-profile',
+            });
+            userProfileImageUrl = result.secure_url;
+        }
+        const updateAdmin = await Admin.findByIdAndUpdate(id, {
+            firstName,
+            lastName,
+            phoneNum,
+            dob,
+            profileImage: userProfileImageUrl,
+        });
+        if (!updateAdmin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+        return res.status(200).json({ message: 'Admin profile updated', admin: updateAdmin });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 
 module.exports = router;

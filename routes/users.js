@@ -1,15 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const multer = require('multer');
-
-
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
 require('dotenv').config();
-
-
 router.post('/create-user', async (req, res) => {
   try {
     // Code to register a new user based on req.body
@@ -49,8 +43,6 @@ router.post('/create-user', async (req, res) => {
     res.status(500).json({ message: 'Internal server Error' });
   }
 });
-
-
 router.post('/user-login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -70,7 +62,6 @@ router.post('/user-login', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 // Fetch all user according to pagination
 router.get('/all-user', async (req, res) => {
   try {
@@ -92,7 +83,6 @@ router.get('/all-user', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 // Export all record
 router.get('/all-users-for-export', async (req, res) => {
   try {
@@ -105,7 +95,6 @@ router.get('/all-users-for-export', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 // Delete users
 router.delete('/delete-user/:id', async (req, res) => {
   try {
@@ -120,8 +109,6 @@ router.delete('/delete-user/:id', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 })
-
-
 // Update user from admin panel
 router.put('/update-user/:id', async (req, res) => {
   try {
@@ -144,7 +131,6 @@ router.put('/update-user/:id', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 // Single user
 router.get('/user/:id', async (req, res) => {
   try {
