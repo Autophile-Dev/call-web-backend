@@ -69,7 +69,7 @@ router.post('/admin-login', async (req, res) => {
 // update basic profile
 router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params.id;
         const { firstName, lastName, phoneNum, dob } = req.body;
 
         // check if an image was uploaded
@@ -97,6 +97,19 @@ router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req,
     }
 });
 
+router.get('/admin/:id', async (req, res) => {
+    try {
+        const adminId = req.params.id;
+        const admin = await Admin.findById(adminId);
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+        res.status(200).json({ admin });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+})
 
 
 module.exports = router;
