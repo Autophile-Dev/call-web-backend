@@ -69,8 +69,12 @@ router.post('/admin-login', async (req, res) => {
 // update basic profile
 router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req, res) => {
     try {
-        const { id } = req.params;
+        const adminId = req.params.id;
         const { firstName, lastName, phoneNum, dob } = req.body;
+        const admin = await Admin.findById(adminId);
+        if (!admin) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         // check if an image was uploaded
         let userProfileImageUrl = '';
@@ -80,17 +84,13 @@ router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req,
             });
             userProfileImageUrl = result.secure_url;
         }
-        const updateAdmin = await Admin.findByIdAndUpdate(id, {
-            firstName,
-            lastName,
-            phoneNum,
-            dob,
-            profileImage: userProfileImageUrl,
-        });
-        if (!updateAdmin) {
-            return res.status(404).json({ message: 'Admin not found' });
-        }
-        return res.status(200).json({ message: 'Admin profile updated', admin: updateAdmin });
+        admin.firstName = firstName;
+        admin.lastName = lastName;
+        admin.phoneNum = phoneNum;
+        admin.dob = dob;
+        admin.profileImage = userProfileImageUrl;
+        await admin.save();
+        res.status(200).json({ message: 'Admin updated successfully' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
