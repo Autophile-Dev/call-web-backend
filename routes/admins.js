@@ -69,7 +69,7 @@ router.post('/admin-login', async (req, res) => {
 // update basic profile
 router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req, res) => {
     try {
-        const { id } = req.params.id;
+        const { id } = req.params;
         const { firstName, lastName, phoneNum, dob } = req.body;
 
         // check if an image was uploaded
