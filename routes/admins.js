@@ -99,7 +99,7 @@ router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req,
 
 router.get('/admin/:id', async (req, res) => {
     try {
-        const adminId = req.id;
+        const adminId = req.params.id;
         const adminSingle = await Admin.findById(adminId);
         if (!adminSingle) {
             return res.status(404).json({ message: 'Admin not found' });
