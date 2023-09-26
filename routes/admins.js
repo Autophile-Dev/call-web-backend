@@ -90,7 +90,7 @@ router.put('/update-admin-basic/:id', upload.single('profileImage'), async (req,
         admin.dob = dob;
         admin.profileImage = userProfileImageUrl;
         await admin.save();
-        res.status(200).json({ message: 'Admin updated successfully' });
+        res.status(200).json({ message: 'Admin updated successfully', updateAdmin: admin });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
