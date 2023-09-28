@@ -168,10 +168,10 @@ router.put('/update-admin-password/:id', async (req, res) => {
     }
 })
 
-router.put('/delete-admin/:id', async (req, res) => {
+router.delete('/delete-admin/:id', async (req, res) => {
     try {
         const adminId = req.params.id;
-        const deletedAdmin = await Admin.findOneAndDelete(adminId);
+        const deletedAdmin = await Admin.findOneAndDelete({ _id: adminId });
         const deletedAdminTheme = await AdminTheme.findOneAndDelete(adminId);
         if (!deletedAdmin || !deletedAdminTheme) {
             return res.status(404).json({ message: 'Admin not found' });
