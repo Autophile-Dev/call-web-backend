@@ -75,7 +75,7 @@ router.post('/admin-login', async (req, res) => {
         // check if admin exists
         const admin = await Admin.findOne({ email });
         if (!admin) {
-            return res.status(400).send({ message: `User Doesn't exists` });
+            return res.status(400).send({ message: `Admin Doesn't exists` });
         }
         // compare password
         const validPassword = await bcrypt.compare(password, admin.password);
