@@ -173,7 +173,7 @@ router.delete('/delete-admin/:id', async (req, res) => {
         const adminId = req.params.id;
         const deletedAdmin = await Admin.findOneAndDelete({ _id: adminId });
         const deletedAdminTheme = await AdminTheme.findOneAndDelete(adminId);
-        if (!deletedAdmin || !deletedAdminTheme) {
+        if (!deletedAdmin && !deletedAdminTheme) {
             return res.status(404).json({ message: 'Admin not found' });
         }
         res.status(200).json({ message: 'Admin deleted successfully' });
