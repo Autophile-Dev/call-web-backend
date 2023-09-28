@@ -6,6 +6,7 @@ const Admin = require('../models/Admin');
 require('dotenv').config();
 const cloudinary = require("../utils/cloudinary");
 const upload = require("../middleware/multer");
+const AdminTheme = require('../models/AdminTheme');
 
 router.post('/admin-register', async (req, res) => {
     try {
@@ -34,9 +35,33 @@ router.post('/admin-register', async (req, res) => {
         });
         await newAdmin.save();
 
+
+        const adminTheme = new AdminTheme({
+            adminId: newAdmin._id,
+            sideBarBackground: '', // Empty string
+            sideBarIconTextColor: '',
+            sideBarHoverTextIconColor: '',
+            sideBarHoverBackgroundColor: '',
+            headerBackgroundColor: '',
+            headerTextColor: '',
+            defaultButtonBackgroundColor: '',
+            addNewBackgroundColor: '',
+            exportsBackgroundColor: '',
+            defaultButtonsTextColor: '',
+            addNewTextColor: '',
+            exportsTextColor: '',
+            defaultButtonHoverBackgroundColor: '',
+            addNewHoverBackgroundColor: '',
+            exportHoverBackgroundColor: '',
+            defaultButtonHoverTextColor: '',
+            addNewHoverTextColor: '',
+            exportHoverTextColor: '',
+        });
+        await adminTheme.save();
+
         const token = jwt.sign({ _id: Admin._id }, process.env.JWT_SECRET);
 
-        return res.status(200).send({ admin: newAdmin, token });
+        return res.status(200).send({ admin: newAdmin, adminTheme: adminTheme, token });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Internal server Error' });
@@ -57,9 +82,14 @@ router.post('/admin-login', async (req, res) => {
         if (!validPassword) {
             return res.status(400).send({ message: 'Password is incorrect' });
         }
+
+
+        const adminTheme = await AdminTheme.findOne({ adminId: admin._id });
+
+
         // Assigning token
         const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET);
-        return res.status(200).send({ admin: admin, token })
+        return res.status(200).send({ admin: admin, adminTheme: adminTheme, token })
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server Error' });
@@ -138,5 +168,19 @@ router.put('/update-admin-password/:id', async (req, res) => {
     }
 })
 
+router.put('/delete-admin/:id', async (req, res) => {
+    try {
+        const adminId = req.params.id;
+        const deletedAdmin = await Admin.findOneAndDelete(adminId);
+        const deletedAdminTheme = await AdminTheme.findOneAndDelete(adminId);
+        if (!deletedAdmin || !deletedAdminTheme) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+        res.status(200).json({ message: 'Admin deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 
 module.exports = router;
