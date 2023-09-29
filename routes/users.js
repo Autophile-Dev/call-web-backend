@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const UserTheme = require('../models/AdminTheme');
+const UserTheme = require('../models/UserTheme');
 
 require('dotenv').config();
 router.post('/create-user', async (req, res) => {
