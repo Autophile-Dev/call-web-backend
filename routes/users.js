@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const UserTheme = require('../models/AdminTheme');
+
 require('dotenv').config();
 router.post('/create-user', async (req, res) => {
   try {
@@ -36,8 +38,30 @@ router.post('/create-user', async (req, res) => {
 
     // const token = jwt.sign({ _id: User._id }, process.env.JWT_SECRET);
 
-    return res.status(200).send({ cmpUser: newUser });
 
+    const userTheme = new UserTheme({
+      userId: newUser._id,
+      sideBarBackground: '', // Empty string
+      sideBarIconTextColor: '',
+      sideBarHoverTextIconColor: '',
+      sideBarHoverBackgroundColor: '',
+      headerBackgroundColor: '',
+      headerTextColor: '',
+      defaultButtonBackgroundColor: '',
+      addNewBackgroundColor: '',
+      exportsBackgroundColor: '',
+      defaultButtonsTextColor: '',
+      addNewTextColor: '',
+      exportsTextColor: '',
+      defaultButtonHoverBackgroundColor: '',
+      addNewHoverBackgroundColor: '',
+      exportHoverBackgroundColor: '',
+      defaultButtonHoverTextColor: '',
+      addNewHoverTextColor: '',
+      exportHoverTextColor: '',
+    })
+    await userTheme.save();
+    return res.status(200).send({ cmpUser: newUser, cmpUserTheme: userTheme });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server Error' });
@@ -54,9 +78,17 @@ router.post('/user-login', async (req, res) => {
     if (!validPassword) {
       return res.status(400).json({ message: 'Password is incorrect' });
     }
+
+
+
+    const userTheme = await UserTheme.findOne({ userId: user._id });
+
+
+
+
     // Assigning a token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    return res.status(200).json({ cmpUser: user, token });
+    return res.status(200).json({ cmpUser: user, cmpUserTheme: userTheme, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -99,8 +131,9 @@ router.get('/all-users-for-export', async (req, res) => {
 router.delete('/delete-user/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-    const deletedUser = await User.findByIdAndDelete(userId);
-    if (!deletedUser) {
+    const deletedUser = await User.findOneAndDelete({ _id: userId });
+    const deletedUserTheme = await UserTheme.findOneAndDelete(userId);
+    if (!deletedUser && !deletedUserTheme) {
       return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ message: 'User deleted successfully' });
@@ -138,14 +171,14 @@ router.get('/user/:id', async (req, res) => {
 
     // Find the user by ID in the database
     const user = await User.findById(userId);
-
+    const userTheme = await UserTheme.findById(userId);
     // Check if the user with the specified ID exists
-    if (!user) {
+    if (!user && !userTheme) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     // Return the user data
-    res.status(200).json({ user });
+    res.status(200).json({ user, userTheme });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
