@@ -41,24 +41,24 @@ router.post('/create-user', async (req, res) => {
 
     const userTheme = new UserTheme({
       userId: newUser._id,
-      sideBarBackground: '', // Empty string
-      sideBarIconTextColor: '',
-      sideBarHoverTextIconColor: '',
-      sideBarHoverBackgroundColor: '',
-      headerBackgroundColor: '',
-      headerTextColor: '',
-      defaultButtonBackgroundColor: '',
-      addNewBackgroundColor: '',
-      exportsBackgroundColor: '',
-      defaultButtonsTextColor: '',
-      addNewTextColor: '',
-      exportsTextColor: '',
-      defaultButtonHoverBackgroundColor: '',
-      addNewHoverBackgroundColor: '',
-      exportHoverBackgroundColor: '',
-      defaultButtonHoverTextColor: '',
-      addNewHoverTextColor: '',
-      exportHoverTextColor: '',
+      sideBarBackground: '#f1f1f1', // Empty string
+      sideBarIconTextColor: '#5f5f5f',
+      sideBarHoverTextIconColor: '#5F5F5F',
+      sideBarHoverBackgroundColor: 'rgba(255,255,255,0.3)',
+      headerBackgroundColor: '#f8f8f8',
+      headerTextColor: '#0d2444',
+      defaultButtonBackgroundColor: '#30507c',
+      addNewBackgroundColor: '#3ac47d',
+      exportsBackgroundColor: '#071529',
+      defaultButtonsTextColor: '#ffffff',
+      addNewTextColor: '#ffffff',
+      exportsTextColor: '#ffffff',
+      defaultButtonHoverBackgroundColor: '#071529',
+      addNewHoverBackgroundColor: '#25a362',
+      exportHoverBackgroundColor: '#30507c',
+      defaultButtonHoverTextColor: '#ffffff',
+      addNewHoverTextColor: '#ffffff',
+      exportHoverTextColor: '#ffffff',
     })
     await userTheme.save();
     return res.status(200).send({ cmpUser: newUser, cmpUserTheme: userTheme });
