@@ -183,4 +183,92 @@ router.delete('/delete-admin/:id', async (req, res) => {
     }
 });
 
+router.put('/update-button/:id', async (req, res) => {
+    try {
+        const adminID = req.params.id
+        const {
+            defaultButtonBackgroundColor,
+            addNewBackgroundColor,
+            exportsBackgroundColor,
+            defaultButtonsTextColor,
+            addNewTextColor,
+            exportsTextColor,
+            defaultButtonHoverBackgroundColor,
+            addNewHoverBackgroundColor,
+            exportHoverBackgroundColor,
+            defaultButtonHoverTextColor,
+            addNewHoverTextColor,
+            exportHoverTextColor
+        } = req.body;
+        const adminTheme = await AdminTheme.findOne({ adminId: adminID });
+        if (!adminTheme) {
+            return res.status(404).json({ message: 'Admin does not exists' });
+        }
+        adminTheme.defaultButtonBackgroundColor = defaultButtonBackgroundColor;
+        adminTheme.addNewBackgroundColor = addNewBackgroundColor;
+        adminTheme.exportsBackgroundColor = exportsBackgroundColor;
+        adminTheme.defaultButtonsTextColor = defaultButtonsTextColor;
+        adminTheme.addNewTextColor = addNewTextColor;
+        adminTheme.exportsTextColor = exportsTextColor;
+        adminTheme.defaultButtonHoverBackgroundColor = defaultButtonHoverBackgroundColor;
+        adminTheme.addNewHoverBackgroundColor = addNewHoverBackgroundColor;
+        adminTheme.exportHoverBackgroundColor = exportHoverBackgroundColor;
+        adminTheme.defaultButtonHoverTextColor = defaultButtonHoverTextColor;
+        adminTheme.addNewHoverTextColor = addNewHoverTextColor;
+        adminTheme.exportHoverTextColor = exportHoverTextColor;
+
+        await adminTheme.save();
+        return res.status(200).json({ message: 'Button themes updated successfully', adminTheme });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+// Update sidebar
+router.put('/update-sidebar/:id', async (req, res) => {
+    try {
+        const adminID = req.params.id;
+        const {
+            sideBarBackground,
+            sideBarIconTextColor,
+            sideBarHoverTextIconColor,
+            sideBarHoverBackgroundColor
+        } = req.body;
+        const adminTheme = await AdminTheme.findOne({ adminId: adminID });
+        if (!adminTheme) {
+            return res.status(404).json({ message: 'Admin does not exists' });
+        }
+        adminTheme.sideBarBackground = sideBarBackground;
+        adminTheme.sideBarIconTextColor = sideBarIconTextColor;
+        adminTheme.sideBarHoverTextIconColor = sideBarHoverTextIconColor;
+        adminTheme.sideBarHoverBackgroundColor = sideBarHoverBackgroundColor;
+        await adminTheme.save();
+        return res.status(200).json({ message: 'Sidebar themes updated successfully', adminTheme });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.put('/update-header/:id', async (req, res) => {
+    try {
+        const adminID = req.params.id;
+        const {
+            headerBackgroundColor,
+            headerTextColor,
+        } = req.body;
+        const adminTheme = await AdminTheme.findOne({ adminId: adminID });
+        if (!adminTheme) {
+            return res.status(404).json({ message: 'Admin does not exists' });
+        }
+        adminTheme.headerBackgroundColor = headerBackgroundColor;
+        adminTheme.headerTextColor = headerTextColor;
+        adminTheme.save();
+        return res.status(200).json({ message: 'Header themes updated successfully', adminTheme });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 module.exports = router;
