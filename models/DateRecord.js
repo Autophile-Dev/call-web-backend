@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const DateRecordSchema = new mongoose.Schema({
-    createdDate: {
-        type: Date,
-    },
+    createdDate: Date,
     totalLeads: String,
     totalAcceptedLeads: String,
     totalRejectedLeads: String,

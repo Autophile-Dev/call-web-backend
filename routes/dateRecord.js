@@ -6,7 +6,7 @@ require('dotenv').config();
 
 
 cron.schedule('0 0 * * *', async () => {
-    const currentDate = new Date();
+    const currentDate = new Date().toLocaleString('en-US', { timeZone: 'Atlantic/Cape_Verde' });
 
     const newDateRecord = new DateRecord({
         createdDate: currentDate,
