@@ -6,7 +6,10 @@ require('dotenv').config();
 
 
 cron.schedule('0 0 * * *', async () => {
-    const currentDate = new Date().toLocaleString('en-US', { timeZone: 'Atlantic/Cape_Verde' });
+    console.log('Cron job started at', new Date());
+
+    // Set the timezone to 'Asia/Karachi' (Pakistan timezone)
+    const currentDate = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
 
     const newDateRecord = new DateRecord({
         createdDate: currentDate,
@@ -23,7 +26,6 @@ cron.schedule('0 0 * * *', async () => {
         console.error('Error inserting record:', error);
     }
 });
-
 router.get('/all-date-records', async (req, res) => {
     try {
         const records = await DateRecord.find().sort({ createdDate: -1 });
