@@ -83,7 +83,8 @@ router.post('/admin-login', async (req, res) => {
             return res.status(400).send({ message: 'Password is incorrect' });
         }
 
-
+        admin.loginCount += 1;
+        await admin.save();
         const adminTheme = await AdminTheme.findOne({ adminId: admin._id });
 
 
