@@ -2,28 +2,24 @@ const express = require('express');
 const router = express.Router();
 const DateRecord = require('../models/DateRecord');
 const cron = require('node-cron');
+const moment = require('moment-timezone');
 require('dotenv').config();
 
 
 cron.schedule('0 0 * * *', async () => {
-    console.log('Cron job started at', new Date());
-
-    // Set the timezone to 'Asia/Karachi' (Pakistan timezone)
-    const currentDate = new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' });
-
-    const newDateRecord = new DateRecord({
-        createdDate: currentDate,
-        totalLeads: '0',
-        totalAcceptedLeads: '0',
-        totalRejectedLeads: '0',
-        totalPendingLeads: '0',
-    });
-
     try {
-        await newDateRecord.save();
-        console.log('Record inserted into the database at', currentDate);
+        const today = new Date();
+        const dateRecord = new DateRecord({
+            createdDate: today,
+            totalLeads: 0,
+            totalAcceptedLeads: 0,
+            totalRejectedLeads: 0,
+            totalPendingLeads: 0,
+        });
+        await dateRecord.save();
+        console.log(`Daily record created at ${today} `);
     } catch (error) {
-        console.error('Error inserting record:', error);
+        console.error('Failed to create record at 12 AM', error);
     }
 });
 router.get('/all-date-records', async (req, res) => {
