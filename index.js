@@ -29,7 +29,7 @@ mongoose.connect(mongodbURI, {
 // Routes
 app.use('/auth/admin', adminAuthRoutes);
 app.use('/uploads', express.static('uploads'));
-app.use('/auth/dateRecords', dateRoutes)
+app.use('/auth/date-records', dateRoutes)
 app.use('/auth/users', userRoutes);
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
