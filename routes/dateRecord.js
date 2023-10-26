@@ -22,6 +22,49 @@ cron.schedule('0 0 * * *', async () => {
         console.error('Failed to create record at 12 AM', error);
     }
 });
+router.post('/create-date-record', async (req, res) => {
+    try {
+        const inputDate = new Date(req.body.createdDate);
+
+        // Check if the inputDate is a valid date
+        if (isNaN(inputDate)) {
+            return res.status(400).json({ error: 'Invalid date format' });
+        }
+
+        const inputDateWithoutTime = new Date(
+            inputDate.getFullYear(),
+            inputDate.getMonth(),
+            inputDate.getDate()
+        );
+
+        // Check if a record with the same date (ignoring time) already exists
+        const existingRecord = await DateRecord.findOne({
+            createdDate: inputDateWithoutTime,
+        });
+
+        if (existingRecord) {
+            return res
+                .status(400)
+                .json({ error: 'Record for this date already exists' });
+        }
+
+        const dateRecord = new DateRecord({
+            createdDate: inputDateWithoutTime,
+            totalLeads: 0,
+            totalAcceptedLeads: 0,
+            totalRejectedLeads: 0,
+            totalPendingLeads: 0,
+        });
+
+        await dateRecord.save();
+        console.log(`Date record created for ${inputDateWithoutTime}`);
+        res.json(dateRecord);
+    } catch (error) {
+        console.error('Failed to create date record', error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
+
 router.get('/all-date-records', async (req, res) => {
     try {
         const records = await DateRecord.find().sort({ createdDate: -1 });

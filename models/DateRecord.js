@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const dateRecordSchema = new mongoose.Schema({
-    createdDate: Date,
+    createdDate: {
+        type: Date,
+        required: true,
+        unique: true, // Ensure that dates are unique, so no duplicate dates can be added.
+    },
     totalLeads: {
         type: Number,
         default: 0,
