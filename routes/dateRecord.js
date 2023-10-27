@@ -74,6 +74,24 @@ router.get('/all-date-records', async (req, res) => {
     }
 });
 
+
+router.get('/check-date-record', async (req, res) => {
+    const createdDate = req.query.createdDate;
+
+    try {
+        const existingRecord = await DateRecord.findOne({ createdDate });
+
+        if (existingRecord) {
+            return res.json({ recordExists: true });
+        } else {
+            return res.json({ recordExists: false });
+        }
+    } catch (error) {
+        console.error('Error checking date record:', error);
+        return res.status(500).json({ error: 'Server Error' });
+    }
+});
+
 router.get('/page-date-records', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
