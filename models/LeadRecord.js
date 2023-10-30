@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-const LeadRecordSchema = new mongoose.Schema({
+const leadRecordSchema = new mongoose.Schema({
     dateID: String,
     employeeID: String,
-    employeeName: String,
+    employeeFirstName: String,
+    employeeLastName: String,
     employeeImage: String,
     createdAt: {
         type: Date,
@@ -24,5 +25,5 @@ const LeadRecordSchema = new mongoose.Schema({
     },
 });
 
-const LeadRecord = mongoose.model('LeadRecord', LeadRecordSchema);
+const LeadRecord = mongoose.model('LeadRecord', leadRecordSchema);
 module.exports = LeadRecord;

@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const UserTheme = require('../models/UserTheme');
-
+const LeadRecord = require('../models/LeadRecord');
+const cloudinary = require("../utils/cloudinary");
+const upload = require("../middleware/multer");
 require('dotenv').config();
 router.post('/create-user', async (req, res) => {
   try {
@@ -141,14 +143,82 @@ router.delete('/delete-user/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
+});
+
+// Update user password from user-panel
+router.put('/update-user-password/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: 'Invalid old password' });
+    }
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedNewPassword;
+    await user.save();
+    res.status(200).json({ message: 'Password updated successfully' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// Update user from user-panel
+router.put('/update-user-basic-profile/:id', upload.single('profileImage'), async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { firstName, lastName, phoneNum, dob } = req.body;
+    const user = await User.findById(userId);
+    const employee = await LeadRecord.findOne({ employeeID: userId });
+    if (!user && !employee) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if image was uploaded
+    let userProfileImageUrl = '';
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'user-profile',
+      });
+      userProfileImageUrl = result.secure_url;
+    }
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.phoneNum = phoneNum;
+    user.dob = dob;
+    user.profileImage = userProfileImageUrl;
+
+    employee.employeeFirstName = firstName;
+    employee.employeeLastName = lastName;
+    employee.employeeImage = userProfileImageUrl;
+    await user.save();
+    await employee.save();
+    res.status(200).json({ message: 'User updated successfully', updateAdmin: admin });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 })
+
 // Update user from admin panel
 router.put('/update-user/:id', async (req, res) => {
   try {
     const userId = req.params.id;
     const { firstName, lastName, phoneNum, address, city, dob } = req.body;
     const user = await User.findById(userId);
-    if (!user) {
+    const employee = await LeadRecord.findOne({ employeeID: userId });
+    if (!user && !employee) {
       return res.status(404).json({ message: 'User not found' });
     }
     user.firstName = firstName;
@@ -157,7 +227,11 @@ router.put('/update-user/:id', async (req, res) => {
     user.address = address;
     user.city = city;
     user.dob = dob;
+    employee.employeeFirstName = firstName;
+    employee.employeeLastName = lastName;
     await user.save();
+    await employee.save();
+
     res.status(200).json({ message: 'User updated successfully' });
   } catch (error) {
     console.error(error);
