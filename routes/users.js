@@ -180,7 +180,7 @@ router.put('/update-user-basic-profile/:id', upload.single('profileImage'), asyn
     const { firstName, lastName, phoneNum, dob } = req.body;
     const user = await User.findById(userId);
     const employee = await LeadRecord.findOne({ employeeID: userId });
-    if (!user && !employee) {
+    if (!user || !employee) {
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -218,7 +218,7 @@ router.put('/update-user/:id', async (req, res) => {
     const { firstName, lastName, phoneNum, address, city, dob } = req.body;
     const user = await User.findById(userId);
     const employee = await LeadRecord.findOne({ employeeID: userId });
-    if (!user && !employee) {
+    if (!user || !employee) {
       return res.status(404).json({ message: 'User not found' });
     }
     user.firstName = firstName;
