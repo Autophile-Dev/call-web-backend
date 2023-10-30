@@ -21,10 +21,7 @@ router.post('/create-lead-record/:id', async (req, res) => {
         } = req.body;
         const currentDate = new Date();
         const dateWithoutTime = new Date(currentDate.toISOString().split('T')[0]);
-        const timeWithoutDate = new Date(currentDate.toISOString().split('T')[1]);
-
-        // Verify that timeWithoutDate is a valid Date object
-        console.log('timeWithoutDate:', timeWithoutDate);
+        const timeWithoutDate = new Date(currentDate - dateWithoutTime);
         // Creating record in New Customer after validation
         const checkCustomer = await NewCustomer.findOne({ customerEmail });
         if (!checkCustomer) {

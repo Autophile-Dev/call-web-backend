@@ -179,8 +179,8 @@ router.put('/update-user-basic-profile/:id', upload.single('profileImage'), asyn
     const userId = req.params.id;
     const { firstName, lastName, phoneNum, dob } = req.body;
     const user = await User.findById(userId);
-    const employee = await LeadRecord.findOne({ employeeID: userId });
-    if (!user || !employee) {
+
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -198,12 +198,21 @@ router.put('/update-user-basic-profile/:id', upload.single('profileImage'), asyn
     user.dob = dob;
     user.profileImage = userProfileImageUrl;
 
-    employee.employeeFirstName = firstName;
-    employee.employeeLastName = lastName;
-    employee.employeeImage = userProfileImageUrl;
+
     await user.save();
-    await employee.save();
-    res.status(200).json({ message: 'User updated successfully', updateAdmin: admin });
+    const updatedUser = await User.findById(userId);
+
+    // Use Mongoose's updateMany method to update matching LeadRecords
+    await LeadRecord.updateMany({ employeeID: userId }, {
+      employeeFirstName: updatedUser.firstName,
+      employeeLastName: updatedUser.lastName,
+      employeeImage: updatedUser.profileImage,
+      // Update employeeImage if needed
+    });
+
+
+
+    res.status(200).json({ message: 'User updated successfully', updateUser: user });
 
   } catch (error) {
     console.error(error);
@@ -217,8 +226,8 @@ router.put('/update-user/:id', async (req, res) => {
     const userId = req.params.id;
     const { firstName, lastName, phoneNum, address, city, dob } = req.body;
     const user = await User.findById(userId);
-    const employee = await LeadRecord.findOne({ employeeID: userId });
-    if (!user || !employee) {
+
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
     user.firstName = firstName;
@@ -227,12 +236,17 @@ router.put('/update-user/:id', async (req, res) => {
     user.address = address;
     user.city = city;
     user.dob = dob;
-    employee.employeeFirstName = firstName;
-    employee.employeeLastName = lastName;
-    await user.save();
-    await employee.save();
 
-    res.status(200).json({ message: 'User updated successfully' });
+    await user.save();
+    const updatedUser = await User.findById(userId);
+
+    // Use Mongoose's updateMany method to update matching LeadRecords
+    await LeadRecord.updateMany({ employeeID: userId }, {
+      employeeFirstName: updatedUser.firstName,
+      employeeLastName: updatedUser.lastName,
+    });
+
+    res.status(200).json({ message: 'User updated successfully', updatedUser: user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });

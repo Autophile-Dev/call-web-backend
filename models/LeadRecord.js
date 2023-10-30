@@ -7,11 +7,11 @@ const leadRecordSchema = new mongoose.Schema({
     employeeImage: String,
     createdAt: {
         type: Date,
-        default: Date.now,
+        required: true,
     },
     createdTime: {
         type: Date,
-        default: Date.now,
+        required: true,
     },
     leadTitle: String,
     customerName: String,
