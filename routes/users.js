@@ -144,7 +144,6 @@ router.delete('/delete-user/:id', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 // Update user password from user-panel
 router.put('/update-user-password/:id', async (req, res) => {
   try {
@@ -171,8 +170,6 @@ router.put('/update-user-password/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 // Update user from user-panel
 router.put('/update-user-basic-profile/:id', upload.single('profileImage'), async (req, res) => {
   try {
@@ -219,7 +216,6 @@ router.put('/update-user-basic-profile/:id', upload.single('profileImage'), asyn
     res.status(500).json({ message: 'Internal Server Error' });
   }
 })
-
 // Update user from admin panel
 router.put('/update-user/:id', async (req, res) => {
   try {
