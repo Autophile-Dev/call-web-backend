@@ -68,6 +68,8 @@ router.post('/create-lead-record/:id', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Internal server Error' });
     }
-})
+});
+
+
 
 module.exports = router;

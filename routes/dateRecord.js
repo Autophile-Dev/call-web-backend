@@ -64,7 +64,19 @@ router.post('/create-date-record', async (req, res) => {
         res.status(500).json({ error: 'Server Error' });
     }
 });
-
+router.get('/single-date-record/:id', async (req, res) => {
+    try {
+        const dateId = req.params.id;
+        const date = await DateRecord.findById(dateId);
+        if (!date) {
+            return res.status(404).json({ message: 'Date not found' });
+        }
+        res.status(200).json({ date });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 router.get('/all-date-records', async (req, res) => {
     try {
         const records = await DateRecord.find().sort({ createdDate: -1 });
