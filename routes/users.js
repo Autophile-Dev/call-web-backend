@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const UserTheme = require('../models/UserTheme');
 const LeadRecord = require('../models/LeadRecord');
+const NewCustomer = require('../models/NewCustomers');
+const CustomerRecord = require('../models/CustomersRecord');
 const cloudinary = require("../utils/cloudinary");
 const upload = require("../middleware/multer");
 require('dotenv').config();
@@ -204,10 +206,19 @@ router.put('/update-user-basic-profile/:id', upload.single('profileImage'), asyn
       employeeFirstName: updatedUser.firstName,
       employeeLastName: updatedUser.lastName,
       employeeImage: updatedUser.profileImage,
-      // Update employeeImage if needed
     });
-
-
+    // Update user in New Customer Record
+    await NewCustomer.updateMany({ employeeID: userId }, {
+      employeeFirstName: updatedUser.firstName,
+      employeeLastName: updatedUser.lastName,
+      employeeImage: updatedUser.profileImage,
+    });
+    // Update user in Customers Record
+    await CustomerRecord.updateMany({ employeeID: userId }, {
+      employeeFirstName: updatedUser.firstName,
+      employeeLastName: updatedUser.lastName,
+      employeeImage: updatedUser.profileImage,
+    });
 
     res.status(200).json({ message: 'User updated successfully', updateUser: user });
 
@@ -241,6 +252,16 @@ router.put('/update-user/:id', async (req, res) => {
       employeeFirstName: updatedUser.firstName,
       employeeLastName: updatedUser.lastName,
     });
+
+    await CustomerRecord.updateMany({ employeeID: userId }, {
+      employeeFirstName: updatedUser.firstName,
+      employeeLastName: updatedUser.lastName,
+    });
+    await NewCustomer.updateMany({ employeeID: userId }, {
+      employeeFirstName: updatedUser.firstName,
+      employeeLastName: updatedUser.lastName,
+    });
+
 
     res.status(200).json({ message: 'User updated successfully', updatedUser: user });
   } catch (error) {

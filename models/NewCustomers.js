@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 const newCustomerSchema = new mongoose.Schema({
+    employeeID: String,
+    employeeFirstName: String,
+    employeeLastName: String,
+    employeeImage: String,
     customerName: String,
     customerAddress: String,
     customerEmail: String,

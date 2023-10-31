@@ -26,6 +26,10 @@ router.post('/create-lead-record/:id', async (req, res) => {
         const checkCustomer = await NewCustomer.findOne({ customerEmail });
         if (!checkCustomer) {
             const newCustomer = new NewCustomer({
+                employeeID,
+                employeeFirstName,
+                employeeLastName,
+                employeeImage,
                 customerName,
                 customerAddress,
                 customerEmail,
@@ -38,6 +42,10 @@ router.post('/create-lead-record/:id', async (req, res) => {
 
         // Creating record of Customers either they exists before or not
         const customerRecord = new CustomerRecord({
+            employeeID,
+            employeeFirstName,
+            employeeLastName,
+            employeeImage,
             customerName,
             customerAddress,
             customerEmail,
