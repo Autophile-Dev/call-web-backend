@@ -80,7 +80,7 @@ router.post('/create-lead-record/:id', async (req, res) => {
 router.get('/fetch-records/:id', async (req, res) => {
     try {
         const dateID = req.params.id;
-        const recordsLeads = await LeadRecord.findOne({ dateID });
+        const recordsLeads = await LeadRecord.find({ dateID: dateID});
 
         if (recordsLeads.length === 0) {
             return res.status(404).json({ message: 'No records found' });
