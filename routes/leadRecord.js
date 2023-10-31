@@ -86,7 +86,7 @@ router.get('/fetch-records/:id', async (req, res) => {
             return res.status(404).json({ message: 'No records found' });
         }
 
-        res.status(200).json({ message: 'Records fetched successfully', recordsLeads });
+        res.status(200).json({ message: 'Records fetched successfully', records:recordsLeads });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
