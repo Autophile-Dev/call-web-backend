@@ -21,7 +21,7 @@ router.post('/create-lead-record/:id', async (req, res) => {
         } = req.body;
         const currentDate = new Date();
         const dateWithoutTime = new Date(currentDate.toISOString().split('T')[0]);
-        const timeWithoutDate = new Date(currentDate - dateWithoutTime);
+        // const timeWithoutDate = new Date(currentDate - dateWithoutTime);
         // Creating record in New Customer after validation
         const checkCustomer = await NewCustomer.findOne({ customerEmail });
         if (!checkCustomer) {
@@ -34,7 +34,7 @@ router.post('/create-lead-record/:id', async (req, res) => {
                 customerAddress,
                 customerEmail,
                 customerPhoneNum,
-                createdAt: dateWithoutTime,
+                createdAt: new Date(),
             });
             await newCustomer.save();
         }
@@ -50,7 +50,7 @@ router.post('/create-lead-record/:id', async (req, res) => {
             customerAddress,
             customerEmail,
             customerPhoneNum,
-            createdAt: dateWithoutTime,
+            createdAt: new Date(),
         });
         await customerRecord.save();
 
@@ -68,7 +68,7 @@ router.post('/create-lead-record/:id', async (req, res) => {
             customerEmail,
             customerPhoneNum,
             createdAt: dateWithoutTime,
-            createdTime: timeWithoutDate,
+            createdTime: new Date(),
         });
         await newLead.save();
         res.status(200).json({ message: 'Lead record created successfully', newLead });
@@ -77,7 +77,21 @@ router.post('/create-lead-record/:id', async (req, res) => {
         res.status(500).json({ message: 'Internal server Error' });
     }
 });
+router.get('/fetch-records/:id', async (req, res) => {
+    try {
+        const dateID = req.params.id;
+        const recordsLeads = await LeadRecord.findOne({ dateID });
 
+        if (recordsLeads.length === 0) {
+            return res.status(404).json({ message: 'No records found' });
+        }
+
+        res.status(200).json({ message: 'Records fetched successfully', recordsLeads });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 
 module.exports = router;
