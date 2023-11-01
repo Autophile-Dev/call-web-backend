@@ -80,18 +80,39 @@ router.post('/create-lead-record/:id', async (req, res) => {
 router.get('/fetch-records/:id', async (req, res) => {
     try {
         const dateID = req.params.id;
-        const recordsLeads = await LeadRecord.find({ dateID: dateID});
+        const recordsLeads = await LeadRecord.find({ dateID: dateID });
 
         if (recordsLeads.length === 0) {
             return res.status(404).json({ message: 'No records found' });
         }
 
-        res.status(200).json({ message: 'Records fetched successfully', records:recordsLeads });
+        res.status(200).json({ message: 'Records fetched successfully', records: recordsLeads });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+router.put('/update-status/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
 
+        if (status !== 'accepted' && status !== 'rejected') {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        const updatedLead = await LeadRecord.findByIdAndUpdate(
+            id,
+            { leadStatus: status },
+            { new: true }
+        );
+        if (!updatedLead) {
+            return res.status(404).json({ error: 'Lead not found' });
+        }
+        res.json(updatedLead);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 module.exports = router;
