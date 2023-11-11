@@ -108,6 +108,8 @@ router.put('/update-status/:id', async (req, res) => {
         if (!updatedLead) {
             return res.status(404).json({ error: 'Lead not found' });
         }
+      
+      
         res.json(updatedLead);
     } catch (error) {
         console.error(error);

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const DateRecord = require('../models/DateRecord');
+const LeadRecord=require('../models/LeadRecord');
 const cron = require('node-cron');
 const moment = require('moment-timezone');
 require('dotenv').config();
@@ -79,8 +80,31 @@ router.get('/single-date-record/:id', async (req, res) => {
 });
 router.get('/all-date-records', async (req, res) => {
     try {
-        const records = await DateRecord.find().sort({ createdDate: -1 });
-        res.json(records);
+        const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
+        const updatedDateRecords = [];
+        for (const dateRecord of dateRecords) {
+            // Fetch all lead records for the current date
+            const recordsLeads = await LeadRecord.find({ dateID: dateRecord._id });
+
+            // Calculate counts
+            const totalLeads = recordsLeads.length;
+            const totalAcceptedLeads = recordsLeads.filter(record => record.leadStatus === 'accepted').length;
+            const totalRejectedLeads = recordsLeads.filter(record => record.leadStatus === 'rejected').length;
+            const totalPendingLeads = recordsLeads.filter(record => record.leadStatus === 'pending').length;
+
+            // Update the dateRecord with lead information
+            const updatedDateRecord = {
+                ...dateRecord.toObject(),
+                totalLeads,
+                totalAcceptedLeads,
+                totalRejectedLeads,
+                totalPendingLeads,
+            };
+            // Push the updated dateRecord to the array
+            updatedDateRecords.push(updatedDateRecord);
+        }
+
+        res.json(updatedDateRecords);
     } catch (error) {
         res.status(500).json({ error: 'Server Error' });
     }
