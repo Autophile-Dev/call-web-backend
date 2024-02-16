@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const DateRecord = require('../models/DateRecord');
-const LeadRecord=require('../models/LeadRecord');
+const LeadRecord = require('../models/LeadRecord');
 const cron = require('node-cron');
 const moment = require('moment-timezone');
 require('dotenv').config();
@@ -78,6 +78,7 @@ router.get('/single-date-record/:id', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+// For Admin
 router.get('/all-date-records', async (req, res) => {
     try {
         const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
@@ -104,11 +105,44 @@ router.get('/all-date-records', async (req, res) => {
             updatedDateRecords.push(updatedDateRecord);
         }
 
-        res.json(updatedDateRecords);
+        res.status(200).json(updatedDateRecords);
     } catch (error) {
         res.status(500).json({ error: 'Server Error' });
     }
 });
+
+// For User
+router.get('/date-list/:id', async (req, res) => {
+    try {
+        const employeeID = req.params.id;
+        const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
+        const updatedLeadRecords = [];
+        for (const dateRecord of dateRecords) {
+            // Fetch all lead record of current user
+            const recordsLeads = await LeadRecord.find({ employeeID: employeeID });
+            // Calculate total leads of current user
+            const totalLeads = recordsLeads.length;
+            const totalAcceptedLeads = recordsLeads.filter(record => record.leadStatus === 'accepted').length;
+            const totalRejectedLeads = recordsLeads.filter(record => record.leadStatus === 'rejected').length;
+            const totalPendingLeads = recordsLeads.filter(record => record.leadStatus === 'pending').length;
+
+            // Update the dateRecord with lead information
+            const updatedLeadRecord = {
+                ...dateRecord.toObject(),
+                totalLeads,
+                totalAcceptedLeads,
+                totalRejectedLeads,
+                totalPendingLeads,
+            };
+            // Push the updated dateRecord to the array
+            updatedLeadRecords.push(updatedLeadRecord);
+        }
+        res.status(200).json(updatedLeadRecords);
+    } catch (error) {
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
+
 
 
 router.get('/check-date-record', async (req, res) => {
