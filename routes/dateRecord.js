@@ -117,7 +117,7 @@ router.get('/date-list/:id', async (req, res) => {
         const employeeId = req.params.id;
         const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
         // const updatedLeadRecords = [];
-        const leadRecords = await LeadRecord.find({ employeeID: employeeId });
+        const leadRecords = await LeadRecord.find({ employeeID: employeeId }).sort({ createdDate: -1 });
         const totalLeads = leadRecords.length;
         const totalAcceptedLeads = leadRecords.filter(record => record.leadStatus === 'accepted').length;
         const totalRejectedLeads = leadRecords.filter(record => record.leadStatus === 'rejected').length;
