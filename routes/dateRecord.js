@@ -114,30 +114,21 @@ router.get('/all-date-records', async (req, res) => {
 // For User
 router.get('/date-list/:id', async (req, res) => {
     try {
-        const employeeID = req.params.id;
+        const employeeId = req.params.id;
         const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
-        const updatedLeadRecords = [];
-        for (const dateRecord of dateRecords) {
-            // Fetch all lead record of current user
-            const recordsLeads = await LeadRecord.find({ employeeID: employeeID });
-            // Calculate total leads of current user
-            const totalLeads = recordsLeads.length;
-            const totalAcceptedLeads = recordsLeads.filter(record => record.leadStatus === 'accepted').length;
-            const totalRejectedLeads = recordsLeads.filter(record => record.leadStatus === 'rejected').length;
-            const totalPendingLeads = recordsLeads.filter(record => record.leadStatus === 'pending').length;
-
-            // Update the dateRecord with lead information
-            const updatedLeadRecord = {
-                ...dateRecord.toObject(),
-                totalLeads,
-                totalAcceptedLeads,
-                totalRejectedLeads,
-                totalPendingLeads,
-            };
-            // Push the updated dateRecord to the array
-            updatedLeadRecords.push(updatedLeadRecord);
-        }
-        res.status(200).json(updatedLeadRecords);
+        // const updatedLeadRecords = [];
+        const leadRecords = await LeadRecord.find({ employeeID: employeeId });
+        const totalLeads = leadRecords.length;
+        const totalAcceptedLeads = leadRecords.filter(record => record.leadStatus === 'accepted').length;
+        const totalRejectedLeads = leadRecords.filter(record => record.leadStatus === 'rejected').length;
+        const totalPendingLeads = leadRecords.filter(record => record.leadStatus === 'pending').length;
+        res.status(200).json({
+            dateRecords,
+            totalLeads,
+            totalAcceptedLeads,
+            totalRejectedLeads,
+            totalPendingLeads
+        });
     } catch (error) {
         res.status(500).json({ error: 'Server Error' });
     }
