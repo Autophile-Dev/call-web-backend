@@ -119,35 +119,38 @@ router.get('/date-list/:id', async (req, res) => {
         // Find all lead records for the given employee ID
         const leadRecords = await LeadRecord.find({ employeeID: employeeId }).sort({ createdDate: -1 });
 
-        // Initialize counts for leads
-        let totalLeads = 0;
-        let totalAcceptedLeads = 0;
-        let totalRejectedLeads = 0;
-        let totalPendingLeads = 0;
-
-        // Calculate counts for each lead status
-        leadRecords.forEach(record => {
-            totalLeads++;
-            if (record.leadStatus === 'accepted') {
-                totalAcceptedLeads++;
-            } else if (record.leadStatus === 'rejected') {
-                totalRejectedLeads++;
-            } else if (record.leadStatus === 'pending') {
-                totalPendingLeads++;
-            }
-        });
+        // Initialize an object to store date records with calculated lead counts
+        const dateRecordsWithCounts = [];
 
         // Find all date records
         const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
 
-        // Respond with calculated counts and all date records
-        res.status(200).json({
-            dateRecords,
-            totalLeads,
-            totalAcceptedLeads,
-            totalRejectedLeads,
-            totalPendingLeads
-        });
+        // Iterate through each date record
+        for (const dateRecord of dateRecords) {
+            // Filter lead records for the current date record
+            const filteredLeadRecords = leadRecords.filter(record => record.dateID.toString() === dateRecord._id.toString());
+
+            // Calculate lead counts for the filtered lead records
+            const totalLeads = filteredLeadRecords.length;
+            const totalAcceptedLeads = filteredLeadRecords.filter(record => record.leadStatus === 'accepted').length;
+            const totalRejectedLeads = filteredLeadRecords.filter(record => record.leadStatus === 'rejected').length;
+            const totalPendingLeads = filteredLeadRecords.filter(record => record.leadStatus === 'pending').length;
+
+            // Create a new object with the calculated lead counts and other date record properties
+            const dateRecordWithCounts = {
+                ...dateRecord.toObject(),
+                totalLeads,
+                totalAcceptedLeads,
+                totalRejectedLeads,
+                totalPendingLeads
+            };
+
+            // Push the new object to the array
+            dateRecordsWithCounts.push(dateRecordWithCounts);
+        }
+
+        // Respond with date records containing calculated lead counts
+        res.status(200).json(dateRecordsWithCounts);
     } catch (error) {
         res.status(500).json({ error: 'Server Error' });
     }
