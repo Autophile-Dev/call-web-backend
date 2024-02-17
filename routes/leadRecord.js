@@ -92,6 +92,25 @@ router.get('/fetch-records/:id', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+// For user
+router.get('/user-lead-records/:dateId/:employeeId', async (req, res) => {
+    try {
+        const dateID = req.params.dateId;
+        const employeeID = req.params.employeeId;
+
+        // Assuming you have a LeadRecord model with appropriate schema
+        const recordsLeads = await LeadRecord.find({ dateID: dateID, employeeID: employeeID }).sort({ createdTime: -1 });
+
+        if (recordsLeads.length === 0) {
+            return res.status(404).json({ message: 'No records found' });
+        }
+
+        res.status(200).json({ message: 'Records fetched successfully', records: recordsLeads });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 router.put('/update-status/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -108,8 +127,8 @@ router.put('/update-status/:id', async (req, res) => {
         if (!updatedLead) {
             return res.status(404).json({ error: 'Lead not found' });
         }
-      
-      
+
+
         res.json(updatedLead);
     } catch (error) {
         console.error(error);
