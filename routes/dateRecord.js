@@ -115,13 +115,32 @@ router.get('/all-date-records', async (req, res) => {
 router.get('/date-list/:id', async (req, res) => {
     try {
         const employeeId = req.params.id;
-        const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
-        // const updatedLeadRecords = [];
+
+        // Find all lead records for the given employee ID
         const leadRecords = await LeadRecord.find({ employeeID: employeeId }).sort({ createdDate: -1 });
-        const totalLeads = leadRecords.length;
-        const totalAcceptedLeads = leadRecords.filter(record => record.leadStatus === 'accepted').length;
-        const totalRejectedLeads = leadRecords.filter(record => record.leadStatus === 'rejected').length;
-        const totalPendingLeads = leadRecords.filter(record => record.leadStatus === 'pending').length;
+
+        // Initialize counts for leads
+        let totalLeads = 0;
+        let totalAcceptedLeads = 0;
+        let totalRejectedLeads = 0;
+        let totalPendingLeads = 0;
+
+        // Calculate counts for each lead status
+        leadRecords.forEach(record => {
+            totalLeads++;
+            if (record.leadStatus === 'accepted') {
+                totalAcceptedLeads++;
+            } else if (record.leadStatus === 'rejected') {
+                totalRejectedLeads++;
+            } else if (record.leadStatus === 'pending') {
+                totalPendingLeads++;
+            }
+        });
+
+        // Find all date records
+        const dateRecords = await DateRecord.find().sort({ createdDate: -1 });
+
+        // Respond with calculated counts and all date records
         res.status(200).json({
             dateRecords,
             totalLeads,
